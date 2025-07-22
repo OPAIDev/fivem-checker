@@ -5,5 +5,5 @@
 /api/*  https://your-backend-api.com/api/:splat  200
 
 # Force HTTPS
-http://resource-checker.pages.dev/*  https://resource-checker.pages.dev/:splat  301!
-http://www.resource-checker.pages.dev/*  https://resource-checker.pages.dev/:splat  301!
+http://fivem-checker.pages.dev/*  https://fivem-checker.pages.dev/:splat  301!
+http://www.fivem-checker.pages.dev/*  https://fivem-checker.pages.dev/:splat  301!

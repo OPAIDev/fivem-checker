@@ -28,7 +28,7 @@ git init
 git add .
 git commit -m "🚀 Initial commit - Ready for Cloudflare Pages"
 git branch -M main
-git remote add origin https://github.com/DEIN-USERNAME/resource-checker.git
+git remote add origin https://github.com/OPAIDev/fivem-checker.git
 git push -u origin main
 ```
 
@@ -169,4 +169,4 @@ npm run build
 **Support:**
 - 📚 [Cloudflare Pages Docs](https://developers.cloudflare.com/pages/)
 - 💬 [Community Discord](https://discord.cloudflare.com)
-- 🐛 [GitHub Issues](https://github.com/DEIN-USERNAME/resource-checker/issues)
+- 🐛 [GitHub Issues](https://github.com/OPAIDev/fivem-checker/issues)

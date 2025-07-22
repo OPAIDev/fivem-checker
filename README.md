@@ -12,7 +12,7 @@ Ein modernes, responsives Dashboard zur Überwachung und Analyse von FiveM Serve
 
 ## 🌐 Live Demo
 
-**Cloudflare Pages:** [Deine-Domain.pages.dev](https://deine-domain.pages.dev)
+**Cloudflare Pages:** [fivem-checker.pages.dev](https://fivem-checker.pages.dev)
 
 ## 🚀 Deployment auf Cloudflare Pages
 
@@ -28,7 +28,7 @@ git init
 git add .
 git commit -m "Initial commit"
 git branch -M main
-git remote add origin https://github.com/DEIN-USERNAME/resource-checker.git
+git remote add origin https://github.com/OPAIDev/fivem-checker.git
 git push -u origin main
 ```
 
@@ -70,7 +70,7 @@ npm run deploy
 ## 📁 Projekt-Struktur
 
 ```
-resource_checker/
+fivem-checker/
 ├── public/                 # Static files für Cloudflare Pages
 │   ├── enhanced_dashboard.html
 │   ├── enhanced_dashboard.js
@@ -144,7 +144,7 @@ Ein hochmodernes, effizientes System zur Sammlung, Analyse und Filterung von Fiv
 ```bash
 # Repository klonen
 git clone <repository-url>
-cd resource_checker
+cd fivem-checker
 
 # Dependencies installieren
 npm install
