@@ -1,0 +1,42 @@
+name = "resource-checker"
+compatibility_date = "2024-01-15"
+
+[env.production]
+name = "resource-checker"
+route = { pattern = "*", zone_name = "" }
+
+# Cloudflare Pages configuration
+[pages]
+name = "resource-checker"
+build_output_dir = "public"
+build_command = "npm run build"
+
+# Environment variables (set these in Cloudflare dashboard)
+[vars]
+# Add your environment variables here if needed
+# API_KEY = "your-api-key"
+
+# Custom headers for security
+[[headers]]
+for = "/*"
+[headers.values]
+"X-Frame-Options" = "DENY"
+"X-Content-Type-Options" = "nosniff"
+"Referrer-Policy" = "strict-origin-when-cross-origin"
+"Permissions-Policy" = "geolocation=(), microphone=(), camera=()"
+
+# Cache static assets
+[[headers]]
+for = "*.css"
+[headers.values]
+"Cache-Control" = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "*.js"
+[headers.values]
+"Cache-Control" = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "*.json"
+[headers.values]
+"Cache-Control" = "public, max-age=3600"

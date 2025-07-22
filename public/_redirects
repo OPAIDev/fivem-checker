@@ -1,0 +1,9 @@
+# SPA fallback - redirect all non-file requests to index.html
+/*    /enhanced_dashboard.html   200
+
+# API redirects (if needed for backend integration)
+/api/*  https://your-backend-api.com/api/:splat  200
+
+# Force HTTPS
+http://resource-checker.pages.dev/*  https://resource-checker.pages.dev/:splat  301!
+http://www.resource-checker.pages.dev/*  https://resource-checker.pages.dev/:splat  301!

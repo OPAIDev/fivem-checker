@@ -1,0 +1,28 @@
+{
+  "totalServers": 668,
+  "validServers": 668,
+  "totalResources": 0,
+  "uniqueResources": 0,
+  "averagePlayersPerServer": 19.188622754491018,
+  "averageResourcesPerServer": 0,
+  "topLanguages": {},
+  "resourcePopularity": {},
+  "frameworkDistribution": {
+    "esx": 0,
+    "qbcore": 0,
+    "vrp": 0,
+    "other": 668
+  },
+  "playerDistribution": {
+    "0-10": 140,
+    "11-25": 338,
+    "26-50": 190,
+    "51-100": 0,
+    "100+": 0
+  },
+  "uptimeStats": {
+    "min": 0,
+    "max": 0,
+    "average": 0
+  }
+}
