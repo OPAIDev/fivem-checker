@@ -49,13 +49,39 @@ class EnhancedDashboard {
     });
     
     // Filters
-    
     document.getElementById('apply-advanced-filters').addEventListener('click', () => {
       this.applyAdvancedFilters();
     });
     
     document.getElementById('clear-advanced-filters').addEventListener('click', () => {
       this.clearAdvancedFilters();
+    });
+    
+    // Filter presets
+    document.querySelectorAll('[data-preset]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const preset = e.target.dataset.preset;
+        this.applyFilterPreset(preset);
+      });
+    });
+    
+    // Quick filters
+    document.getElementById('framework-filter').addEventListener('change', (e) => {
+      if (e.target.value) {
+        this.activeFilters.framework = e.target.value;
+      } else {
+        delete this.activeFilters.framework;
+      }
+      this.applyLocalFilters();
+    });
+    
+    document.getElementById('language-filter').addEventListener('change', (e) => {
+      if (e.target.value) {
+        this.activeFilters.language = e.target.value;
+      } else {
+        delete this.activeFilters.language;
+      }
+      this.applyLocalFilters();
     });
     
     // Export
@@ -199,6 +225,7 @@ class EnhancedDashboard {
       
       this.serverData = data;
       this.filteredServerData = [...this.serverData];
+      this.currentPage = 1;
       this.updateServerTable();
       document.getElementById('active-servers').textContent = data.length;
     } catch (error) {
@@ -353,7 +380,7 @@ class EnhancedDashboard {
     });
     
     this.activeFilters = { ...this.activeFilters, ...filters };
-    this.socket.emit('apply-filter', this.activeFilters);
+    this.applyLocalFilters();
     this.addActivity('Erweiterte Filter werden angewendet...', 'info');
   }
   
@@ -396,8 +423,70 @@ class EnhancedDashboard {
     }
   }
   
+  applyLocalFilters() {
+    if (!this.serverData || this.serverData.length === 0) {
+      this.filteredServerData = [];
+      this.updateServerTable();
+      return;
+    }
+
+    this.filteredServerData = this.serverData.filter(server => {
+      // Min/Max Players Filter
+      if (this.activeFilters.minPlayers && server.players < this.activeFilters.minPlayers) {
+        return false;
+      }
+      if (this.activeFilters.maxPlayers && server.players > this.activeFilters.maxPlayers) {
+        return false;
+      }
+
+      // Name Pattern Filter
+      if (this.activeFilters.namePattern) {
+        const pattern = new RegExp(this.activeFilters.namePattern, 'i');
+        if (!pattern.test(server.name)) {
+          return false;
+        }
+      }
+
+      // Resource Filters
+      if (this.activeFilters.hasAllResources && this.activeFilters.hasAllResources.length > 0) {
+        const hasAll = this.activeFilters.hasAllResources.every(resource => 
+          server.resources && server.resources.includes(resource)
+        );
+        if (!hasAll) return false;
+      }
+
+      if (this.activeFilters.hasAnyResources && this.activeFilters.hasAnyResources.length > 0) {
+        const hasAny = this.activeFilters.hasAnyResources.some(resource => 
+          server.resources && server.resources.includes(resource)
+        );
+        if (!hasAny) return false;
+      }
+
+      // Framework Filter
+      if (this.activeFilters.framework) {
+        const serverFramework = this.getServerFramework(server).toLowerCase();
+        if (serverFramework !== this.activeFilters.framework.toLowerCase()) {
+          return false;
+        }
+      }
+
+      // Language Filter
+      if (this.activeFilters.language) {
+        if (server.language !== this.activeFilters.language) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    this.currentPage = 1; // Reset to first page
+    this.updateServerTable();
+  }
+
   clearBasicFilters() {
     this.activeFilters = {};
+    this.applyLocalFilters();
     this.filteredServerData = [...this.serverData];
     this.currentPage = 1;
     this.updateServerTable();
@@ -523,27 +612,42 @@ class EnhancedDashboard {
       return;
     }
     
-    try {
-      const response = await fetch('/api/search', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, type: 'all' })
-      });
-      
-      const data = await response.json();
-      if (data.success) {
-        this.filteredServerData = data.data.servers;
-        this.currentPage = 1;
-        this.updateServerTable();
-        
-        if (this.currentSection === 'resources') {
-          this.resourceData = data.data.resources;
-          this.updateResourcesGrid();
-        }
+    const searchTerm = query.toLowerCase();
+    this.filteredServerData = this.serverData.filter(server => {
+      // Search in server name
+      if (server.name.toLowerCase().includes(searchTerm)) {
+        return true;
       }
-    } catch (error) {
-      console.error('Suchfehler:', error);
-    }
+      
+      // Search in server ID
+      if (server.id.toLowerCase().includes(searchTerm)) {
+        return true;
+      }
+      
+      // Search in resources
+      if (server.resources && server.resources.some(resource => 
+        resource.toLowerCase().includes(searchTerm)
+      )) {
+        return true;
+      }
+      
+      // Search in language
+      if (server.language && server.language.toLowerCase().includes(searchTerm)) {
+        return true;
+      }
+      
+      // Search in framework
+      const framework = this.getServerFramework(server).toLowerCase();
+      if (framework.includes(searchTerm)) {
+        return true;
+      }
+      
+      return false;
+    });
+    
+    this.currentPage = 1;
+    this.updateServerTable();
+    this.addActivity(`Suche nach "${query}" - ${this.filteredServerData.length} Ergebnisse`, 'info');
   }
   
   filterResources(query) {
