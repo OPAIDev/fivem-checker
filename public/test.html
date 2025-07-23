@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test - FiveM Resource Checker</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .nav-item { display: inline-block; margin: 10px; padding: 10px; background: #007bff; color: white; cursor: pointer; }
+    .nav-item.active { background: #0056b3; }
+    .content-section { display: none; margin: 20px 0; }
+    .content-section.active { display: block; }
+    .error { color: red; }
+    .success { color: green; }
+  </style>
+</head>
+<body>
+  <h1>FiveM Resource Checker - Test</h1>
+  
+  <nav>
+    <div class="nav-item active" data-section="dashboard">Dashboard</div>
+    <div class="nav-item" data-section="servers">Server</div>
+    <div class="nav-item" data-section="resources">Ressourcen</div>
+    <div class="nav-item" data-section="filters">Filter</div>
+  </nav>
+  
+  <div id="status"></div>
+  
+  <section id="dashboard-section" class="content-section active">
+    <h2>Dashboard</h2>
+    <p>Server: <span id="server-count">Lade...</span></p>
+    <p>Ressourcen: <span id="resource-count">Lade...</span></p>
+  </section>
+  
+  <section id="servers-section" class="content-section">
+    <h2>Server</h2>
+    <div id="server-list">Lade Server-Daten...</div>
+  </section>
+  
+  <section id="resources-section" class="content-section">
+    <h2>Ressourcen</h2>
+    <div id="resource-list">Lade Ressourcen-Daten...</div>
+  </section>
+  
+  <section id="filters-section" class="content-section">
+    <h2>Filter</h2>
+    <p>Filter-Optionen werden hier angezeigt.</p>
+  </section>
+  
+  <script>
+    // Test Navigation
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        console.log('Navigation clicked:', item.dataset.section);
+        
+        // Update navigation
+        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+        item.classList.add('active');
+        
+        // Update content
+        document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+        const targetSection = document.getElementById(item.dataset.section + '-section');
+        if (targetSection) {
+          targetSection.classList.add('active');
+          document.getElementById('status').innerHTML = '<span class="success">Navigation funktioniert: ' + item.dataset.section + '</span>';
+        } else {
+          document.getElementById('status').innerHTML = '<span class="error">Sektion nicht gefunden: ' + item.dataset.section + '-section</span>';
+        }
+      });
+    });
+    
+    // Test Data Loading
+    async function testDataLoading() {
+      try {
+        // Test servers.json
+        const serversResponse = await fetch('./data/servers.json');
+        const servers = await serversResponse.json();
+        document.getElementById('server-count').textContent = servers.length;
+        document.getElementById('server-list').innerHTML = servers.map(s => `<p>${s.name} (${s.players}/${s.maxPlayers})</p>`).join('');
+        
+        // Test resources.json
+        const resourcesResponse = await fetch('./data/resources.json');
+        const resources = await resourcesResponse.json();
+        document.getElementById('resource-count').textContent = resources.length;
+        document.getElementById('resource-list').innerHTML = resources.map(r => `<p>${r.name}: ${r.count} (${r.percentage}%)</p>`).join('');
+        
+        document.getElementById('status').innerHTML += '<br><span class="success">Daten erfolgreich geladen!</span>';
+      } catch (error) {
+        console.error('Fehler beim Laden der Daten:', error);
+        document.getElementById('status').innerHTML += '<br><span class="error">Fehler beim Laden der Daten: ' + error.message + '</span>';
+      }
+    }
+    
+    // Start test
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('Test-Seite geladen');
+      testDataLoading();
+    });
+  </script>
+</body>
+</html>
