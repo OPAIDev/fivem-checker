@@ -19,6 +19,7 @@ class EnhancedDashboard {
   
   init() {
     this.setupEventListeners();
+    this.setupSocketListeners();
     this.loadInitialData();
     this.initializeCharts();
   }
@@ -799,9 +800,14 @@ class EnhancedDashboard {
     if (!this.statistics) return;
     
     document.getElementById('total-servers').textContent = this.statistics.totalServers || 0;
-    document.getElementById('active-servers').textContent = this.statistics.validServers || 0;
-    document.getElementById('total-resources').textContent = this.statistics.uniqueResources || 0;
-    document.getElementById('total-languages').textContent = this.statistics.topLanguages?.size || 0;
+    document.getElementById('active-servers').textContent = this.statistics.activeServers || 0;
+    document.getElementById('total-resources').textContent = this.statistics.totalResources || 0;
+    
+    // Update language count if element exists
+    const langElement = document.getElementById('total-languages');
+    if (langElement) {
+      langElement.textContent = Object.keys(this.statistics.languages || {}).length;
+    }
   }
   
   initializeCharts() {
@@ -813,7 +819,7 @@ class EnhancedDashboard {
       this.charts.framework = new Chart(frameworkCtx, {
         type: 'doughnut',
         data: {
-          labels: ['ESX', 'QBCore', 'VRP', 'Andere'],
+          labels: ['ESX', 'QBCore', 'VRP', 'Standalone'],
           datasets: [{
             data: [0, 0, 0, 0],
             backgroundColor: [
@@ -845,7 +851,7 @@ class EnhancedDashboard {
       this.charts.player = new Chart(playerCtx, {
         type: 'bar',
         data: {
-          labels: ['0-10', '11-25', '26-50', '51-100', '100+'],
+          labels: ['0-50', '51-100', '101-250', '251-500', '500+'],
           datasets: [{
             label: 'Server',
             data: [0, 0, 0, 0, 0],
@@ -888,13 +894,13 @@ class EnhancedDashboard {
     if (!this.statistics) return;
     
     // Update framework chart
-    if (this.charts.framework && this.statistics.frameworkDistribution) {
-      const dist = this.statistics.frameworkDistribution;
+    if (this.charts.framework && this.statistics.frameworks) {
+      const frameworks = this.statistics.frameworks;
       this.charts.framework.data.datasets[0].data = [
-        dist.esx || 0,
-        dist.qbcore || 0,
-        dist.vrp || 0,
-        dist.other || 0
+        frameworks.esx || 0,
+        frameworks.qbcore || 0,
+        frameworks.vrp || 0,
+        frameworks.standalone || 0
       ];
       this.charts.framework.update();
     }
@@ -903,11 +909,11 @@ class EnhancedDashboard {
     if (this.charts.player && this.statistics.playerDistribution) {
       const dist = this.statistics.playerDistribution;
       this.charts.player.data.datasets[0].data = [
-        dist['0-10'] || 0,
-        dist['11-25'] || 0,
-        dist['26-50'] || 0,
+        dist['0-50'] || 0,
         dist['51-100'] || 0,
-        dist['100+'] || 0
+        dist['101-250'] || 0,
+        dist['251-500'] || 0,
+        dist['500+'] || 0
       ];
       this.charts.player.update();
     }
