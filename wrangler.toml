@@ -6,6 +6,8 @@ name = "fivem-checker"
 route = { pattern = "*", zone_name = "" }
 
 # Cloudflare Pages configuration
+pages_build_output_dir = "public"
+
 [pages]
 name = "fivem-checker"
 build_output_dir = "public"
