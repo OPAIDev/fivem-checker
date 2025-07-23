@@ -1,5 +1,5 @@
 # SPA fallback - redirect all non-file requests to index.html
-/*    /enhanced_dashboard.html   200
+/*    /index.html   200
 
 # API redirects (if needed for backend integration)
 /api/*  https://your-backend-api.com/api/:splat  200
