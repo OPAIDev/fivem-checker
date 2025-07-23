@@ -708,6 +708,33 @@ class EnhancedDashboard {
     
     document.getElementById('total-resource-count').textContent = 
       `${filtered.length} Ressourcen${filtered.length > 100 ? ' (100 angezeigt)' : ''}`;
+    
+    // Also filter servers that use this resource
+    this.filterServersByResource(query);
+    
+    this.addActivity(`Ressourcen gefiltert: ${filtered.length} Ergebnisse für "${query}"`, 'info');
+  }
+  
+  filterServersByResource(resourceName) {
+    if (!resourceName.trim()) {
+      this.filteredServerData = [...this.serverData];
+      this.updateServerTable();
+      return;
+    }
+    
+    const searchTerm = resourceName.toLowerCase();
+    this.filteredServerData = this.serverData.filter(server => {
+      if (server.resources && Array.isArray(server.resources)) {
+        return server.resources.some(resource => 
+          resource.toLowerCase().includes(searchTerm)
+        );
+      }
+      return false;
+    });
+    
+    this.currentPage = 1;
+    this.updateServerTable();
+    this.addActivity(`Server mit Ressource "${resourceName}": ${this.filteredServerData.length} gefunden`, 'info');
   }
   
   async exportServers() {
