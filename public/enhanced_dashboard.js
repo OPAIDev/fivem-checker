@@ -74,28 +74,37 @@ class EnhancedDashboard {
     });
     
     // Quick filters
-    document.getElementById('framework-filter').addEventListener('change', (e) => {
-      if (e.target.value) {
-        this.activeFilters.framework = e.target.value;
-      } else {
-        delete this.activeFilters.framework;
-      }
-      this.applyLocalFilters();
-    });
+    const frameworkFilter = document.getElementById('framework-filter');
+    if (frameworkFilter) {
+      frameworkFilter.addEventListener('change', (e) => {
+        if (e.target.value) {
+          this.activeFilters.framework = e.target.value;
+        } else {
+          delete this.activeFilters.framework;
+        }
+        this.applyLocalFilters();
+      });
+    }
     
-    document.getElementById('language-filter').addEventListener('change', (e) => {
-      if (e.target.value) {
-        this.activeFilters.language = e.target.value;
-      } else {
-        delete this.activeFilters.language;
-      }
-      this.applyLocalFilters();
-    });
+    const languageFilter = document.getElementById('language-filter');
+    if (languageFilter) {
+      languageFilter.addEventListener('change', (e) => {
+        if (e.target.value) {
+          this.activeFilters.language = e.target.value;
+        } else {
+          delete this.activeFilters.language;
+        }
+        this.applyLocalFilters();
+      });
+    }
     
     // Export
-    document.getElementById('export-servers').addEventListener('click', () => {
-      this.exportServers();
-    });
+    const exportBtn = document.getElementById('export-servers');
+    if (exportBtn) {
+      exportBtn.addEventListener('click', () => {
+        this.exportServers();
+      });
+    }
     
     // Table sorting
     document.querySelectorAll('[data-sort]').forEach(header => {
@@ -106,29 +115,41 @@ class EnhancedDashboard {
     });
     
     // Pagination
-    document.getElementById('prev-page').addEventListener('click', () => {
-      if (this.currentPage > 1) {
-        this.currentPage--;
-        this.updateServerTable();
-      }
-    });
-    
-    document.getElementById('next-page').addEventListener('click', () => {
-      const totalPages = Math.ceil(this.filteredServerData.length / this.itemsPerPage);
-      if (this.currentPage < totalPages) {
-        this.currentPage++;
-        this.updateServerTable();
-      }
-    });
+    const prevPageBtn = document.getElementById('prev-page');
+    if (prevPageBtn) {
+      prevPageBtn.addEventListener('click', () => {
+        if (this.currentPage > 1) {
+          this.currentPage--;
+          this.updateServerTable();
+        }
+      });
+    }
+
+    const nextPageBtn = document.getElementById('next-page');
+    if (nextPageBtn) {
+      nextPageBtn.addEventListener('click', () => {
+        const totalPages = Math.ceil(this.filteredServerData.length / this.itemsPerPage);
+        if (this.currentPage < totalPages) {
+          this.currentPage++;
+          this.updateServerTable();
+        }
+      });
+    }
     
     // Modal controls
-    document.getElementById('close-progress-modal').addEventListener('click', () => {
-      this.hideProgressModal();
-    });
+    const closeProgressModal = document.getElementById('close-progress-modal');
+    if (closeProgressModal) {
+      closeProgressModal.addEventListener('click', () => {
+        this.hideProgressModal();
+      });
+    }
     
-    document.getElementById('close-server-modal').addEventListener('click', () => {
-      this.hideServerModal();
-    });
+    const closeServerModal = document.getElementById('close-server-modal');
+    if (closeServerModal) {
+      closeServerModal.addEventListener('click', () => {
+        this.hideServerModal();
+      });
+    }
     
     // Filter presets
     document.querySelectorAll('.preset-btn').forEach(btn => {
@@ -139,27 +160,42 @@ class EnhancedDashboard {
     });
     
     // Activity feed
-    document.getElementById('clear-activity').addEventListener('click', () => {
-      this.clearActivityFeed();
-    });
+    const clearActivity = document.getElementById('clear-activity');
+    if (clearActivity) {
+      clearActivity.addEventListener('click', () => {
+        this.clearActivityFeed();
+      });
+    }
     
     // Resource search
-    document.getElementById('resource-search').addEventListener('input', (e) => {
-      this.filterResources(e.target.value);
-    });
+    const resourceSearch = document.getElementById('resource-search');
+    if (resourceSearch) {
+      resourceSearch.addEventListener('input', (e) => {
+        this.filterResources(e.target.value);
+      });
+    }
     
     // Refresh buttons
-    document.getElementById('refresh-servers').addEventListener('click', () => {
-      this.refreshServerData();
-    });
+    const refreshServers = document.getElementById('refresh-servers');
+    if (refreshServers) {
+      refreshServers.addEventListener('click', () => {
+        this.refreshServerData();
+      });
+    }
     
-    document.getElementById('refresh-framework-chart').addEventListener('click', () => {
-      this.updateFrameworkChart();
-    });
+    const refreshFrameworkChart = document.getElementById('refresh-framework-chart');
+    if (refreshFrameworkChart) {
+      refreshFrameworkChart.addEventListener('click', () => {
+        this.updateFrameworkChart();
+      });
+    }
     
-    document.getElementById('refresh-player-chart').addEventListener('click', () => {
-      this.updatePlayerChart();
-    });
+    const refreshPlayerChart = document.getElementById('refresh-player-chart');
+    if (refreshPlayerChart) {
+      refreshPlayerChart.addEventListener('click', () => {
+        this.updatePlayerChart();
+      });
+    }
   }
   
   // Static version - no socket listeners needed
