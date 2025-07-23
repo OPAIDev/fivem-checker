@@ -48,6 +48,14 @@ class EnhancedDashboard {
       this.performGlobalSearch(e.target.value);
     });
     
+    // Resource search
+    const resourceSearch = document.getElementById('resource-search');
+    if (resourceSearch) {
+      resourceSearch.addEventListener('input', (e) => {
+        this.filterResources(e.target.value);
+      });
+    }
+    
     // Filters
     document.getElementById('apply-advanced-filters').addEventListener('click', () => {
       this.applyAdvancedFilters();
@@ -202,7 +210,23 @@ class EnhancedDashboard {
   }
   
   startResourceAnalysis() {
-    this.addActivity('Ressourcen-Analyse nicht verfügbar in statischer Version', 'warning');
+    this.addActivity('Ressourcen-Analyse wird gestartet...', 'info');
+    
+    // Simulate analysis with existing data
+    setTimeout(() => {
+      if (this.resourceData && this.resourceData.length > 0) {
+        this.addActivity(`Analyse abgeschlossen: ${this.resourceData.length} Ressourcen analysiert`, 'success');
+        
+        // Update resource statistics
+        const topResources = this.resourceData
+          .sort((a, b) => (b.usageCount || 0) - (a.usageCount || 0))
+          .slice(0, 5);
+          
+        this.addActivity(`Top 5 Ressourcen: ${topResources.map(r => r.name).join(', ')}`, 'info');
+      } else {
+        this.addActivity('Keine Ressourcen-Daten verfügbar', 'warning');
+      }
+    }, 1000);
   }
   
   async loadInitialData() {
@@ -337,6 +361,8 @@ class EnhancedDashboard {
     card.className = 'resource-card';
     card.onclick = () => this.showResourceDetails(resource);
     
+    const usageCount = resource.usageCount || resource.serverCount || 0;
+    
     card.innerHTML = `
       <h3>
         <i class="fas fa-code"></i>
@@ -344,7 +370,10 @@ class EnhancedDashboard {
       </h3>
       <div class="resource-stats">
         <span>Verwendet von:</span>
-        <span class="server-count-badge">${resource.serverCount} Server</span>
+        <span class="server-count-badge">${usageCount} Server</span>
+      </div>
+      <div class="resource-category">
+        <span class="category-badge ${resource.category.toLowerCase()}">${resource.category}</span>
       </div>
     `;
     
@@ -794,8 +823,47 @@ class EnhancedDashboard {
   }
   
   showResourceDetails(resource) {
-    // Implementation for resource details modal
-    console.log('Show resource details:', resource);
+    const modal = document.getElementById('resource-modal');
+    if (!modal) {
+      // Create a simple alert if modal doesn't exist
+      alert(`Ressource: ${resource.name}\nVerwendet von: ${resource.usageCount || resource.serverCount || 0} Servern\nKategorie: ${resource.category || 'Unbekannt'}\nBeschreibung: ${resource.description || 'Keine Beschreibung verfügbar'}`);
+      return;
+    }
+    
+    const title = document.getElementById('resource-modal-title');
+    const body = document.getElementById('resource-modal-body');
+    
+    if (title) title.textContent = resource.name;
+    
+    if (body) {
+      body.innerHTML = `
+        <div class="resource-details">
+          <div class="detail-section">
+            <h4>Grundinformationen</h4>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <label>Name:</label>
+                <span>${this.escapeHtml(resource.name)}</span>
+              </div>
+              <div class="detail-item">
+                <label>Kategorie:</label>
+                <span class="category-badge ${(resource.category || 'other').toLowerCase()}">${resource.category || 'Unbekannt'}</span>
+              </div>
+              <div class="detail-item">
+                <label>Verwendet von:</label>
+                <span>${resource.usageCount || resource.serverCount || 0} Servern</span>
+              </div>
+              <div class="detail-item">
+                <label>Beschreibung:</label>
+                <span>${resource.description || 'Keine Beschreibung verfügbar'}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    modal.classList.add('active');
   }
   
   showProgressModal(title, message) {
