@@ -1,0 +1,34 @@
+{
+  "totalServers": 2754,
+  "activeServers": 2689,
+  "totalPlayers": 45672,
+  "totalResources": 1247,
+  "frameworks": {
+    "esx": 1247,
+    "vrp": 892,
+    "qbcore": 234,
+    "standalone": 381
+  },
+  "languages": {
+    "en-US": 1234,
+    "de-DE": 567,
+    "pt-BR": 445,
+    "fr-FR": 234,
+    "es-ES": 209
+  },
+  "playerDistribution": {
+    "0-50": 1234,
+    "51-100": 567,
+    "101-250": 445,
+    "251-500": 234,
+    "500+": 209
+  },
+  "topResources": [
+    {"name": "esx", "count": 1247},
+    {"name": "vrp", "count": 892},
+    {"name": "mysql-async", "count": 756},
+    {"name": "hardcap", "count": 634},
+    {"name": "chat", "count": 589}
+  ],
+  "lastUpdated": "2025-01-27T10:30:00Z"
+}

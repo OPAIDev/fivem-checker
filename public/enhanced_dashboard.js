@@ -1,7 +1,7 @@
-// Enhanced Dashboard JavaScript
+// Enhanced Dashboard JavaScript - Static Version
 class EnhancedDashboard {
   constructor() {
-    this.socket = io();
+    // Removed socket.io for static hosting
     this.currentSection = 'dashboard';
     this.serverData = [];
     this.filteredServerData = [];
@@ -19,7 +19,6 @@ class EnhancedDashboard {
   
   init() {
     this.setupEventListeners();
-    this.setupSocketListeners();
     this.loadInitialData();
     this.initializeCharts();
   }
@@ -128,90 +127,11 @@ class EnhancedDashboard {
     });
   }
   
+  // Static version - no socket listeners needed
   setupSocketListeners() {
-    this.socket.on('connect', () => {
-      this.updateConnectionStatus(true);
-      this.addActivity('Verbindung zum Server hergestellt', 'success');
-    });
-    
-    this.socket.on('disconnect', () => {
-      this.updateConnectionStatus(false);
-      this.addActivity('Verbindung zum Server verloren', 'error');
-    });
-    
-    // Collection events
-    this.socket.on('collection:start', () => {
-      this.showProgressModal('Server-Sammlung', 'Sammle Server-IDs...');
-      this.addActivity('Server-Sammlung gestartet', 'info');
-    });
-    
-    this.socket.on('collection:progress', (data) => {
-      this.updateProgress(data.current || 0, data.total || 1000, data.message);
-      if (data.count) {
-        document.getElementById('total-servers').textContent = data.count;
-      }
-    });
-    
-    this.socket.on('collection:complete', (data) => {
-      this.hideProgressModal();
-      this.addActivity(`Server-Sammlung abgeschlossen: ${data.count} Server`, 'success');
-      document.getElementById('total-servers').textContent = data.count;
-      this.updateStatistics();
-    });
-    
-    this.socket.on('collection:error', (data) => {
-      this.hideProgressModal();
-      this.addActivity(`Sammlung fehlgeschlagen: ${data.message}`, 'error');
-    });
-    
-    // Analysis events
-    this.socket.on('analysis:start', () => {
-      this.showProgressModal('Server-Analyse', 'Analysiere Server-Daten...');
-      this.addActivity('Server-Analyse gestartet', 'info');
-    });
-    
-    this.socket.on('analysis:progress', (data) => {
-      this.updateProgress(data.current, data.total, data.message);
-    });
-    
-    this.socket.on('analysis:server', (data) => {
-      // Real-time server updates
-      this.addServerToTable(data.data);
-    });
-    
-    this.socket.on('analysis:complete', (data) => {
-      this.hideProgressModal();
-      this.addActivity(`Analyse abgeschlossen: ${data.count} Server analysiert`, 'success');
-      this.loadServerData();
-      this.updateStatistics();
-    });
-    
-    this.socket.on('analysis:error', (data) => {
-      this.hideProgressModal();
-      this.addActivity(`Analyse fehlgeschlagen: ${data.message}`, 'error');
-    });
-    
-    // Filter results
-    this.socket.on('filter:result', (data) => {
-      this.filteredServerData = data.servers;
-      this.currentPage = 1;
-      this.updateServerTable();
-      this.addActivity(`Filter angewendet: ${data.count} Server gefunden`, 'info');
-    });
-    
-    // Statistics updates
-    this.socket.on('statistics:update', (data) => {
-      this.statistics = data;
-      this.updateDashboardStats();
-      this.updateCharts();
-    });
-    
-    // Data loaded
-    this.socket.on('data:loaded', (data) => {
-      this.addActivity(`Daten geladen: ${data.serverData} Server, ${data.resources} Ressourcen`, 'info');
-      this.loadServerData();
-      this.loadResourceData();
-    });
+    // Removed for static hosting
+    this.updateConnectionStatus(true);
+    this.addActivity('Statische Daten geladen', 'success');
   }
   
   switchSection(section) {
@@ -251,55 +171,52 @@ class EnhancedDashboard {
   }
   
   startServerCollection() {
-    this.socket.emit('collect-servers', { headless: false });
+    this.addActivity('Server-Sammlung nicht verfügbar in statischer Version', 'warning');
   }
   
   startResourceAnalysis() {
-    this.socket.emit('analyze-resources');
+    this.addActivity('Ressourcen-Analyse nicht verfügbar in statischer Version', 'warning');
   }
   
   async loadInitialData() {
     try {
-      // Load existing data
-      this.socket.emit('load-data');
-      
-      // Request current statistics
-      this.socket.emit('get-statistics');
-      
+      this.addActivity('Lade statische Daten...', 'info');
+      await this.loadServerData();
+      await this.loadResourceData();
+      this.updateStatistics();
+      this.addActivity('Statische Daten erfolgreich geladen', 'success');
     } catch (error) {
-      console.error('Fehler beim Laden der Daten:', error);
-      this.addActivity('Fehler beim Laden der Daten', 'error');
+      console.error('Error loading static data:', error);
+      this.addActivity('Fehler beim Laden der statischen Daten', 'error');
     }
   }
   
   async loadServerData() {
     try {
-      const response = await fetch('/api/servers');
+      const response = await fetch('./data/servers.json');
       const data = await response.json();
       
-      if (data.success) {
-        this.serverData = data.data;
-        this.filteredServerData = [...this.serverData];
-        this.updateServerTable();
-        document.getElementById('active-servers').textContent = data.count;
-      }
+      this.serverData = data;
+      this.filteredServerData = [...this.serverData];
+      this.updateServerTable();
+      document.getElementById('active-servers').textContent = data.length;
     } catch (error) {
       console.error('Fehler beim Laden der Server-Daten:', error);
+      this.addActivity('Fehler beim Laden der Server-Daten', 'error');
     }
   }
   
   async loadResourceData() {
     try {
-      const response = await fetch('/api/resources');
+      const response = await fetch('./data/resources.json');
       const data = await response.json();
       
-      if (data.success) {
-        this.resourceData = data.data;
-        this.updateResourcesGrid();
-        document.getElementById('total-resources').textContent = data.count;
-      }
+      this.resourceData = data;
+      this.updateResourcesGrid();
+      document.getElementById('total-resources').textContent = data.length;
     } catch (error) {
       console.error('Fehler beim Laden der Ressourcen-Daten:', error);
+      this.addActivity('Fehler beim Laden der Ressourcen-Daten', 'error');
     }
   }
   
@@ -866,16 +783,15 @@ class EnhancedDashboard {
   
   async updateStatistics() {
     try {
-      const response = await fetch('/api/statistics');
+      const response = await fetch('./data/statistics.json');
       const data = await response.json();
       
-      if (data.success) {
-        this.statistics = data.data;
-        this.updateDashboardStats();
-        this.updateCharts();
-      }
+      this.statistics = data;
+      this.updateDashboardStats();
+      this.updateCharts();
     } catch (error) {
       console.error('Fehler beim Laden der Statistiken:', error);
+      this.addActivity('Fehler beim Laden der Statistiken', 'error');
     }
   }
   

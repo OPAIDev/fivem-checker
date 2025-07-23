@@ -1,0 +1,44 @@
+[
+  {
+    "name": "esx",
+    "count": 1247,
+    "percentage": 45.2,
+    "category": "framework",
+    "description": "ESX Framework - Roleplay Framework"
+  },
+  {
+    "name": "vrp",
+    "count": 892,
+    "percentage": 32.4,
+    "category": "framework",
+    "description": "vRP Framework - Roleplay Framework"
+  },
+  {
+    "name": "mysql-async",
+    "count": 756,
+    "percentage": 27.5,
+    "category": "database",
+    "description": "MySQL Async - Database Connection"
+  },
+  {
+    "name": "hardcap",
+    "count": 634,
+    "percentage": 23.1,
+    "category": "utility",
+    "description": "Hard Cap - Player Limit Control"
+  },
+  {
+    "name": "chat",
+    "count": 589,
+    "percentage": 21.4,
+    "category": "communication",
+    "description": "Chat System - In-game Communication"
+  },
+  {
+    "name": "spawnmanager",
+    "count": 523,
+    "percentage": 19.0,
+    "category": "core",
+    "description": "Spawn Manager - Player Spawning"
+  }
+]

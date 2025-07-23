@@ -3,14 +3,422 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FiveM Resource Checker</title>
-  <meta http-equiv="refresh" content="0; url=enhanced_dashboard.html">
-  <link rel="canonical" href="enhanced_dashboard.html">
+  <title>Enhanced FiveM Resource Checker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="enhanced_styles.css">
 </head>
 <body>
-  <p>Weiterleitung zum <a href="enhanced_dashboard.html">FiveM Resource Checker Dashboard</a>...</p>
-  <script>
-    window.location.href = 'enhanced_dashboard.html';
-  </script>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <i class="fas fa-rocket"></i>
+          <span>FiveM Checker</span>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="#dashboard" class="nav-item active" data-section="dashboard">
+          <i class="fas fa-chart-pie"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="#servers" class="nav-item" data-section="servers">
+          <i class="fas fa-network-wired"></i>
+          <span>Server</span>
+        </a>
+        <a href="#resources" class="nav-item" data-section="resources">
+          <i class="fas fa-cube"></i>
+          <span>Ressourcen</span>
+        </a>
+        <a href="#filters" class="nav-item" data-section="filters">
+          <i class="fas fa-sliders-h"></i>
+          <span>Filter</span>
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="status-indicator">
+          <div class="status-dot" id="connection-status"></div>
+          <span id="connection-text">Verbunden</span>
+        </div>
+      </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="main-header">
+        <div class="header-left">
+          <h1 id="page-title">Dashboard</h1>
+          <p id="page-subtitle">Übersicht über alle FiveM-Server und Ressourcen</p>
+        </div>
+        <div class="header-right">
+          <div class="search-container">
+            <i class="fas fa-magnifying-glass"></i>
+            <input type="text" id="global-search" placeholder="Server oder Ressourcen suchen...">
+          </div>
+          <div class="action-buttons">
+            <button id="collect-servers-btn" class="btn primary">
+              <i class="fas fa-cloud-arrow-down"></i>
+              <span>Server sammeln</span>
+            </button>
+            <button id="analyze-resources-btn" class="btn secondary">
+              <i class="fas fa-chart-simple"></i>
+              <span>Analysieren</span>
+            </button>
+          </div>
+        </div>
+      </header>
+      
+      <!-- Dashboard Section -->
+      <section id="dashboard-section" class="content-section active">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon primary">
+              <i class="fas fa-database"></i>
+            </div>
+            <div class="stat-content">
+              <h3>Server IDs</h3>
+              <p class="stat-number" id="total-servers">-</p>
+              <span class="stat-change positive" id="servers-change">+0</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon success">
+              <i class="fas fa-circle-check"></i>
+            </div>
+            <div class="stat-content">
+              <h3>Aktive Server</h3>
+              <p class="stat-number" id="active-servers">-</p>
+              <span class="stat-change positive" id="active-change">+0</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon warning">
+              <i class="fas fa-boxes-stacked"></i>
+            </div>
+            <div class="stat-content">
+              <h3>Ressourcen</h3>
+              <p class="stat-number" id="total-resources">-</p>
+              <span class="stat-change positive" id="resources-change">+0</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon info">
+              <i class="fas fa-language"></i>
+            </div>
+            <div class="stat-content">
+              <h3>Sprachen</h3>
+              <p class="stat-number" id="total-languages">-</p>
+              <span class="stat-change neutral" id="languages-change">+0</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Charts Row -->
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Framework-Verteilung</h3>
+              <div class="chart-actions">
+                <button class="btn small" id="refresh-framework-chart">
+                  <i class="fas fa-arrows-rotate"></i>
+                </button>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="framework-chart"></canvas>
+            </div>
+          </div>
+          
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Spieler-Verteilung</h3>
+              <div class="chart-actions">
+                <button class="btn small" id="refresh-player-chart">
+                  <i class="fas fa-arrows-rotate"></i>
+                </button>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="player-chart"></canvas>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Activity Feed -->
+        <div class="activity-card">
+          <div class="activity-header">
+            <h3><i class="fas fa-clock-rotate-left"></i> Aktivitäts-Feed</h3>
+            <button class="btn small" id="clear-activity">
+              <i class="fas fa-trash-can"></i>
+              Löschen
+            </button>
+          </div>
+          <div class="activity-feed" id="activity-feed">
+            <div class="activity-item info">
+              <div class="activity-icon"><i class="fas fa-info-circle"></i></div>
+              <div class="activity-content">
+                <p>System bereit. Klicke auf "Server sammeln" um zu starten.</p>
+                <span class="activity-time">Jetzt</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Servers Section -->
+      <section id="servers-section" class="content-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>Server-Übersicht</h2>
+            <span class="server-count" id="filtered-server-count">0 Server</span>
+          </div>
+          <div class="section-actions">
+            <button class="btn secondary" id="export-servers">
+              <i class="fas fa-file-csv"></i>
+              CSV Export
+            </button>
+            <button class="btn primary" id="refresh-servers">
+              <i class="fas fa-arrows-rotate"></i>
+              Aktualisieren
+            </button>
+          </div>
+        </div>
+        
+
+        
+        <!-- Servers Table -->
+        <div class="table-container">
+          <table class="data-table" id="servers-table">
+            <thead>
+              <tr>
+                <th data-sort="name">Name <i class="fas fa-sort"></i></th>
+                <th data-sort="players">Spieler <i class="fas fa-sort"></i></th>
+                <th data-sort="language">Sprache <i class="fas fa-sort"></i></th>
+                <th data-sort="resourceCount">Ressourcen <i class="fas fa-sort"></i></th>
+                <th data-sort="framework">Framework <i class="fas fa-sort"></i></th>
+                <th>Aktionen</th>
+              </tr>
+            </thead>
+            <tbody id="servers-tbody">
+              <!-- Server rows will be inserted here -->
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="pagination-container">
+          <div class="pagination-info">
+            <span id="pagination-info">Zeige 0-0 von 0 Servern</span>
+          </div>
+          <div class="pagination-controls">
+            <button class="btn small" id="prev-page" disabled>
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <div id="pagination-numbers"></div>
+            <button class="btn small" id="next-page" disabled>
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Resources Section -->
+      <section id="resources-section" class="content-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>Ressourcen-Analyse</h2>
+            <span class="resource-count" id="total-resource-count">0 Ressourcen</span>
+          </div>
+          <div class="section-actions">
+            <button class="btn secondary" id="export-resources">
+              <i class="fas fa-download"></i>
+              Export
+            </button>
+          </div>
+        </div>
+        
+        <!-- Resource Search -->
+        <div class="search-bar">
+          <i class="fas fa-search"></i>
+          <input type="text" id="resource-search" placeholder="Ressourcen durchsuchen...">
+        </div>
+        
+        <!-- Resources Grid -->
+        <div class="resources-grid" id="resources-grid">
+          <!-- Resource cards will be inserted here -->
+        </div>
+      </section>
+      
+
+      
+      <!-- Filters Section -->
+      <section id="filters-section" class="content-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>Erweiterte Filter</h2>
+            <span class="subtitle">Erstelle komplexe Filterkriterien</span>
+          </div>
+        </div>
+        
+        <!-- Advanced Filters -->
+        <div class="advanced-filters modern-filters">
+          <div class="filter-category">
+            <h3><i class="fas fa-server"></i> Server-Eigenschaften</h3>
+            <div class="filter-row">
+              <div class="filter-field">
+                <label><i class="fas fa-users"></i> Spieleranzahl</label>
+                <div class="range-inputs">
+                  <div class="input-wrapper">
+                    <i class="fas fa-hashtag input-icon"></i>
+                    <input type="number" id="adv-min-players" placeholder="Min">
+                  </div>
+                  <span>bis</span>
+                  <div class="input-wrapper">
+                    <i class="fas fa-hashtag input-icon"></i>
+                    <input type="number" id="adv-max-players" placeholder="Max">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="filter-category">
+            <h3><i class="fas fa-boxes-stacked"></i> Ressourcen-Filter</h3>
+            <div class="filter-row">
+              <div class="filter-field">
+                <label><i class="fas fa-check-double"></i> Enthält alle Ressourcen</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-list input-icon"></i>
+                  <input type="text" id="adv-has-all-resources" placeholder="resource1, resource2, ...">
+                </div>
+              </div>
+              <div class="filter-field">
+                <label><i class="fas fa-check"></i> Enthält eine der Ressourcen</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-list input-icon"></i>
+                  <input type="text" id="adv-has-any-resources" placeholder="resource1, resource2, ...">
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="filter-category">
+            <h3><i class="fas fa-cogs"></i> Erweiterte Kriterien</h3>
+            <div class="filter-row">
+              <div class="filter-field">
+                <label><i class="fas fa-code"></i> Name-Pattern (Regex)</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-search input-icon"></i>
+                  <input type="text" id="adv-name-pattern" placeholder="z.B. .*RP.*">
+                </div>
+              </div>
+              <div class="filter-field">
+                <label><i class="fas fa-clock"></i> Mindest-Uptime (Stunden)</label>
+                <div class="input-wrapper">
+                  <i class="fas fa-hourglass-half input-icon"></i>
+                  <input type="number" id="adv-min-uptime" placeholder="0">
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="filter-actions">
+            <button class="btn primary modern-btn" id="apply-advanced-filters">
+              <i class="fas fa-sliders-h"></i>
+              Erweiterte Filter anwenden
+            </button>
+            <button class="btn secondary modern-btn" id="save-filter-preset">
+              <i class="fas fa-bookmark"></i>
+              Als Preset speichern
+            </button>
+            <button class="btn secondary modern-btn" id="clear-advanced-filters">
+              <i class="fas fa-xmark"></i>
+              Alle Filter zurücksetzen
+            </button>
+          </div>
+        </div>
+        
+        <!-- Filter Presets -->
+        <div class="filter-presets">
+          <h3>Filter-Presets</h3>
+          <div class="preset-buttons" id="filter-presets">
+            <button class="preset-btn" data-preset="german-rp">
+              <i class="fas fa-flag"></i>
+              Deutsche RP-Server
+            </button>
+            <button class="preset-btn" data-preset="high-pop">
+              <i class="fas fa-users"></i>
+              Hohe Spielerzahl
+            </button>
+            <button class="preset-btn" data-preset="esx-servers">
+              <i class="fas fa-code"></i>
+              ESX-Server
+            </button>
+            <button class="preset-btn" data-preset="new-servers">
+              <i class="fas fa-star"></i>
+              Neue Server
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  
+  <!-- Progress Modal -->
+  <div id="progress-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="progress-title">Verarbeitung läuft...</h3>
+        <button class="modal-close" id="close-progress-modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <div class="progress-text">
+            <span id="progress-current">0</span> / <span id="progress-total">0</span>
+            (<span id="progress-percentage">0%</span>)
+          </div>
+        </div>
+        <div class="progress-message" id="progress-message">
+          Initialisierung...
+        </div>
+        <div class="progress-details" id="progress-details">
+          <!-- Detailed progress info -->
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Server Details Modal -->
+  <div id="server-modal" class="modal">
+    <div class="modal-content large">
+      <div class="modal-header">
+        <h3 id="server-modal-title">Server-Details</h3>
+        <button class="modal-close" id="close-server-modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body" id="server-modal-body">
+        <!-- Server details will be inserted here -->
+      </div>
+    </div>
+  </div>
+  
+  <!-- Scripts -->
+  <!-- Socket.io removed for static hosting -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="enhanced_dashboard.js"></script>
 </body>
 </html>

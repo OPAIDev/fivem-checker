@@ -1,0 +1,35 @@
+[
+  {
+    "id": "vxz4gq",
+    "name": "[BRASIL]✅Nobre RolePlay #WIPE HOJE FACs LIVRES",
+    "players": 1937,
+    "maxPlayers": 2048,
+    "language": "pt-BR",
+    "resources": ["hardcap", "fps", "interactions", "dk", "arena", "lscustoms", "tooltip", "vrp", "lafy", "variables"],
+    "framework": "vrp",
+    "uptime": "99.2%",
+    "ping": 45
+  },
+  {
+    "id": "abc123",
+    "name": "GermanRP - Dein Roleplay Server",
+    "players": 856,
+    "maxPlayers": 1024,
+    "language": "de-DE",
+    "resources": ["esx", "mysql-async", "skinchanger", "esx_menu_default", "esx_basicneeds"],
+    "framework": "esx",
+    "uptime": "98.7%",
+    "ping": 23
+  },
+  {
+    "id": "def456",
+    "name": "FiveM Freeroam Server",
+    "players": 234,
+    "maxPlayers": 512,
+    "language": "en-US",
+    "resources": ["spawnmanager", "chat", "mapmanager", "fivem", "hardcap"],
+    "framework": "standalone",
+    "uptime": "97.1%",
+    "ping": 67
+  }
+]
