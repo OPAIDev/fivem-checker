@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🚀 FiveM Resource Checker Dashboard
 
 Ein modernes, responsives Dashboard zur Überwachung und Analyse von FiveM Server-Ressourcen und Statistiken.
@@ -385,3 +386,7 @@ Bei Fragen oder Problemen:
 **Entwickelt mit ❤️ für die FiveM-Community**
 
 *Dieses Tool ist darauf ausgelegt, die FiveM-Server-Landschaft zu analysieren und Entwicklern sowie Server-Betreibern wertvolle Einblicke zu geben.*
+=======
+# fivem-checker
+FiveM Resource Checker
+>>>>>>> ec18a25bfe9c49d39faca9191328b4b84d05d0b9
